@@ -1,4 +1,4 @@
-"""Compatibility alias for :mod:`fubumio.colors`."""
+"""Compatibility alias for :mod:`reiplotlib.colors`."""
 
 from .colors import *  # noqa: F403
 from .colors import __all__ as _colors_all

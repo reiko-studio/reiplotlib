@@ -3,7 +3,7 @@ requires = ["hatchling>=1.26"]
 build-backend = "hatchling.build"
 
 [project]
-name = "fubumio"
+name = "reiplotlib"
 version = "0.1.0"
 description = "Small, opinionated matplotlib colors, styles, and cleanup helpers."
 readme = "README.md"
@@ -32,7 +32,7 @@ Homepage = "https://github.com/leogabac/fubumio"
 Issues = "https://github.com/leogabac/fubumio/issues"
 
 [tool.hatch.build.targets.wheel]
-packages = ["src/fubumio"]
+packages = ["src/reiplotlib"]
 
 [tool.ruff]
 line-length = 88

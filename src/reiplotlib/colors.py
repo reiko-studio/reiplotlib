@@ -1,4 +1,4 @@
-"""Color namespaces for fubumio."""
+"""Color namespaces for reiplotlib."""
 
 from .palette import (
     AccentColors,

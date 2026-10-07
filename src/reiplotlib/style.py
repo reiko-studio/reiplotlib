@@ -1,4 +1,4 @@
-"""Matplotlib rcParams for the fubumio style."""
+"""Matplotlib rcParams for the reiplotlib style."""
 
 from __future__ import annotations
 
@@ -14,7 +14,7 @@ from . import palettes as p
 STYLE: dict[str, Any] = {
     "axes.axisbelow": True,
     "axes.edgecolor": c.neutral.ink,
-    "axes.facecolor": c.neutral.paper,
+    "axes.facecolor": c.neutral.white,
     "axes.grid": False,
     "axes.labelcolor": c.neutral.ink,
     "axes.labelsize": 11,
@@ -23,7 +23,7 @@ STYLE: dict[str, Any] = {
     "axes.spines.right": True,
     "axes.spines.top": True,
     "figure.dpi": 120,
-    "figure.facecolor": c.neutral.paper,
+    "figure.facecolor": c.neutral.white,
     "figure.figsize": (7.0, 4.2),
     "font.family": "serif",
     "font.size": 10,
@@ -34,7 +34,7 @@ STYLE: dict[str, Any] = {
     "lines.linewidth": 2.0,
     "savefig.bbox": "tight",
     "savefig.dpi": 180,
-    "savefig.facecolor": c.neutral.paper,
+    "savefig.facecolor": c.neutral.white,
     "text.latex.preamble": r"\usepackage{amsfonts}",
     "text.usetex": True,
     "xtick.color": c.neutral.ink,
@@ -47,7 +47,7 @@ STYLE: dict[str, Any] = {
 
 
 def apply_style(overrides: Mapping[str, Any] | None = None) -> None:
-    """Apply the fubumio matplotlib style globally."""
+    """Apply the reiplotlib matplotlib style globally."""
 
     rc = STYLE.copy()
     if overrides:
@@ -57,7 +57,7 @@ def apply_style(overrides: Mapping[str, Any] | None = None) -> None:
 
 @contextmanager
 def rc_context(overrides: Mapping[str, Any] | None = None) -> Iterator[None]:
-    """Temporarily use the fubumio style inside a ``with`` block."""
+    """Temporarily use the reiplotlib style inside a ``with`` block."""
 
     rc = STYLE.copy()
     if overrides:

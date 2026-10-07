@@ -1,4 +1,4 @@
-"""Small matplotlib utilities with fubumio color defaults."""
+"""Small matplotlib utilities with reiplotlib color defaults."""
 
 from . import color, colors, export, layouts, options, palettes
 from .axes import (

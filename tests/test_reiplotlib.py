@@ -5,16 +5,16 @@ matplotlib.use("Agg")
 import matplotlib.pyplot as plt
 from matplotlib.colors import is_color_like
 
-import fubumio as fm
-from fubumio import colors as c
-from fubumio import export
-from fubumio import layouts as layout
-from fubumio import options as o
-from fubumio import palettes as p
+import reiplotlib as rpl
+from reiplotlib import colors as c
+from reiplotlib import export
+from reiplotlib import layouts as layout
+from reiplotlib import options as o
+from reiplotlib import palettes as p
 
 
 def test_palette_returns_hex_colors():
-    assert fm.palette("duo")[:2] == ("#58BFCB", "#D35C7F")
+    assert rpl.palette("duo")[:2] == ("#58BFCB", "#D35C7F")
 
 
 def test_color_namespaces_expose_hex_values():
@@ -43,7 +43,7 @@ def test_new_palettes_include_imported_colors():
         "#594967",
         "#ca7845",
     )
-    assert fm.palette("suisei") == p.suisei
+    assert rpl.palette("suisei") == p.suisei
 
 
 def test_plot_options_expose_overridable_matplotlib_kwargs():
@@ -158,8 +158,8 @@ def test_layout_subplots_sets_size_without_hiding_matplotlib_kwargs():
 
 def test_rc_context_applies_and_restores_style():
     before = plt.rcParams["axes.facecolor"]
-    with fm.rc_context():
-        assert plt.rcParams["axes.facecolor"] == "#FAFAF7"
+    with rpl.rc_context():
+        assert plt.rcParams["axes.facecolor"] == "#FFFFFF"
         assert plt.rcParams["font.family"] == ["serif"]
         assert plt.rcParams["text.usetex"] is True
         assert plt.rcParams["text.latex.preamble"] == r"\usepackage{amsfonts}"
@@ -183,9 +183,9 @@ def test_axes_helpers_return_axes():
         ax.fill_between([0, 1], [0.2, 0.3], [0.3, 0.4], **o.fill(c.ina.gold))
         ax.hist([0.1, 0.2, 0.2, 0.3], **o.hist(c.ina.purple))
         ax.legend()
-        assert fm.clean_axes(ax) is ax
-        assert fm.percent_axis(ax) is ax
-        assert fm.label_panel(ax, "A") is ax
+        assert rpl.clean_axes(ax) is ax
+        assert rpl.percent_axis(ax) is ax
+        assert rpl.label_panel(ax, "A") is ax
     finally:
         plt.close(fig)
 
@@ -193,7 +193,7 @@ def test_axes_helpers_return_axes():
 def test_use_palette_sets_axes_color_cycle():
     fig, ax = plt.subplots()
     try:
-        assert fm.use_palette(ax, p.ina_contrast) is ax
+        assert rpl.use_palette(ax, p.ina_contrast) is ax
         (line_a,) = ax.plot([0, 1], [0, 1])
         (line_b,) = ax.plot([0, 1], [1, 0])
         assert line_a.get_color() == p.ina_contrast[0]
@@ -207,7 +207,7 @@ def test_clean_legend_updates_existing_axes_legend():
     try:
         ax.plot([0, 1], [0, 1], label="a")
         ax.plot([0, 1], [1, 0], label="b")
-        assert fm.clean_legend(ax, ncols=2, loc="upper center") is ax
+        assert rpl.clean_legend(ax, ncols=2, loc="upper center") is ax
         legend = ax.get_legend()
         assert legend is not None
         assert legend.get_frame_on() is False
@@ -221,7 +221,7 @@ def test_clean_legend_noops_without_labeled_artists():
     fig, ax = plt.subplots()
     try:
         ax.plot([0, 1], [0, 1])
-        assert fm.clean_legend(ax) is ax
+        assert rpl.clean_legend(ax) is ax
         assert ax.get_legend() is None
     finally:
         plt.close(fig)
@@ -232,7 +232,7 @@ def test_drop_axis_labels_removes_selected_labels():
     try:
         ax.plot([0, 1], [0, 1])
         ax.set(xlabel="x label", ylabel="y label")
-        assert fm.drop_axis_labels(ax, "x") is ax
+        assert rpl.drop_axis_labels(ax, "x") is ax
         assert ax.get_xlabel() == ""
         assert ax.get_ylabel() == "y label"
         assert not any(label.get_visible() for label in ax.get_xticklabels())
@@ -240,14 +240,14 @@ def test_drop_axis_labels_removes_selected_labels():
         assert not any(tick.get_visible() for tick in ax.xaxis.get_ticklines())
 
         ax.set(xlabel="x label", ylabel="y label")
-        fm.drop_axis_labels(ax, "y")
+        rpl.drop_axis_labels(ax, "y")
         assert ax.get_xlabel() == "x label"
         assert ax.get_ylabel() == ""
         assert not any(label.get_visible() for label in ax.get_yticklabels())
         assert not any(tick.get_visible() for tick in ax.yaxis.get_ticklines())
 
         ax.set(xlabel="x label", ylabel="y label")
-        fm.drop_axis_labels(ax)
+        rpl.drop_axis_labels(ax)
         assert ax.get_xlabel() == ""
         assert ax.get_ylabel() == ""
         assert not any(label.get_visible() for label in ax.get_xticklabels())
@@ -261,7 +261,7 @@ def test_drop_axis_labels_can_keep_tick_labels_and_ticks():
     try:
         ax.plot([0, 1], [0, 1])
         ax.set(xlabel="x label", ylabel="y label")
-        fm.drop_axis_labels(ax, tick_labels=False, ticks=False)
+        rpl.drop_axis_labels(ax, tick_labels=False, ticks=False)
         assert ax.get_xlabel() == ""
         assert ax.get_ylabel() == ""
         assert any(label.get_visible() for label in ax.get_xticklabels())

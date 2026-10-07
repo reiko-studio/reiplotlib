@@ -1,4 +1,4 @@
-"""Named color palettes for fubumio."""
+"""Named color palettes for reiplotlib."""
 
 from __future__ import annotations
 

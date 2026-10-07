@@ -1,4 +1,4 @@
-"""Color tokens and palette helpers for fubumio plots."""
+"""Color tokens and palette helpers for reiplotlib plots."""
 
 from __future__ import annotations
 
@@ -47,6 +47,7 @@ class NeutralColors:
     ink: Color = Color("neutral.ink", "#22242A")
     muted: Color = Color("neutral.muted", "#727783")
     paper: Color = Color("neutral.paper", "#FAFAF7")
+    white: Color = Color("neutral.white", "#FFFFFF")
     grid: Color = Color("neutral.grid", "#D9DDE3")
 
 
