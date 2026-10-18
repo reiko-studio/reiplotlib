@@ -37,7 +37,11 @@ def size(
     unit: Unit = "pt",
     journal: Journal = "prl",
 ) -> tuple[float, float]:
-    """Return a figure size in inches."""
+    """Return a figure size in inches using a journal's column widths.
+
+    The only current journal preset is ``"prl"`` (the default). Numeric widths
+    use ``unit`` directly, independently of the journal preset.
+    """
 
     if isinstance(width, str):
         width_in = pt_to_in(JOURNAL_WIDTHS_PT[journal][width])
@@ -57,7 +61,12 @@ def subplots(
     journal: Journal = "prl",
     **kwargs: Any,
 ):
-    """Create matplotlib subplots with a publication-sized default figsize."""
+    """Create subplots with column widths selected by ``journal``.
+
+    ``journal="prl"`` is the default and only current preset. Width and aspect
+    describe the whole figure. Explicit ``figsize`` overrides the computed size;
+    remaining keywords pass through to Matplotlib.
+    """
 
     kwargs.setdefault(
         "figsize",

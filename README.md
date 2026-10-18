@@ -6,6 +6,8 @@ axes and add the pieces you need.
 
 Part of **Reiko Studio**.
 
+![The same damped oscillations with default Matplotlib on the left and reiplotlib styling on the right](docs/images/style-comparison.png)
+
 ## Installation
 
 ```bash
@@ -46,8 +48,6 @@ with rpl.rc_context({"text.usetex": True}):
     rpl.clean_legend(ax, ncols=3, loc="upper right")
     rpl.export.savefig(fig, "figures/response")
 ```
-
-![Damped oscillations rendered with LaTeX and Grove colors](docs/images/response.png)
 
 Run this with a working LaTeX installation to save `figures/response.png` and
 `figures/response.pdf`. `rc_context()` restores your Matplotlib settings when the
@@ -152,16 +152,18 @@ ordinary color strings and work directly with Matplotlib.
 
 ## Size and style
 
-`layouts.subplots()` uses PRL single- and double-column widths. `aspect` is height
-divided by width; other arguments pass through to Matplotlib.
+`layouts.subplots()` accepts a `journal` preset and single- or double-column
+widths. PRL (`journal="prl"`) is the default and currently the only preset;
+more journal sizes are planned. `aspect` is height divided by width; other
+arguments pass through to Matplotlib.
 
 ![Figure sizes drawn to a common scale: single column, double column with two panels, and a custom size](docs/images/sizing.png)
 
 ```python
 from reiplotlib import layouts as layout
 
-fig, ax = layout.subplots(width="single", aspect=0.75)
-fig, axs = layout.subplots(1, 2, width="double", aspect=0.45)
+fig, ax = layout.subplots(journal="prl", width="single", aspect=0.75)
+fig, axs = layout.subplots(1, 2, journal="prl", width="double", aspect=0.45)
 fig, ax = layout.subplots(figsize=(3.3, 3.0))
 ```
 
@@ -169,7 +171,8 @@ Single-column width is 243 TeX points (3.36 inches); double-column width is
 486 points (6.72 inches). Width and aspect describe the whole figure, including
 all panels. The sketches use a common scale; dashed boxes indicate plot areas.
 
-An explicit `figsize` takes precedence. `layout.size("single", aspect=0.75)`
+An explicit `figsize` takes precedence.
+`layout.size("single", journal="prl", aspect=0.75)`
 returns dimensions in inches for use with `plt.subplots()`.
 These are figure canvas dimensions; tight cropping during export can change
 the saved bounds. Use `bbox_inches=None` when the exported size must be exact.
@@ -185,7 +188,7 @@ ax.fill_between(x, lo, hi, **o.fill(p.grove[0], alpha=0.2))
 Pass a color explicitly when using these presets; they carry their own color
 rather than advancing the axes cycle. Use `ax.plot(x, y)` for automatic colors.
 
-`rpl.clean_axes(ax, grid=False)` removes the top and right spines and tick marks.
+`rpl.clean_axes(ax, grid=False)` removes the top and right spines, keeping ticks.
 `rpl.clean_legend(ax)` makes a compact legend from labeled artists. For panels,
 use `rpl.label_panel(ax, "A")`; `rpl.percent_axis(ax, axis="y")` formats fractions
 as percentages.
@@ -267,12 +270,30 @@ at creation; recreate the artist to change the data.
 
 ### Visible limits
 
-To fit y limits to the visible x range:
+Setting x limits alone leaves Matplotlib's y range based on the full curve.
+Use `autoscale_y()` to fit the portion you are looking at:
 
 ```python
-ax.set_xlim(2, 8)
-rpl.autoscale_y(ax, margin=0.05)
+with rpl.rc_context({"text.usetex": True}):
+    fig, axes = layout.subplots(1, 2, width="double", aspect=0.38,
+                               layout="constrained")
+    x = np.linspace(0, 10, 400)
+    y = 8 * np.exp(-x) + 0.15 * np.sin(3 * x)
+
+    for ax in axes:
+        ax.plot(x, y)
+        ax.set(xlim=(4, 10), xlabel=r"Time, $t$")
+        rpl.clean_axes(ax, grid=False)
+    axes[0].set(title="Default y limits", ylabel="Response")
+    axes[1].set_title("Visible-range y limits")
+    rpl.autoscale_y(axes[1], margin=0.08)
+    rpl.export.savefig(fig, "figures/autoscale")
 ```
+
+![The same visible x range with default y limits and automatic visible-range y limits](docs/images/autoscale.png)
+
+The large initial peak is outside both panels. Fitting the y limits to the
+visible data reveals the small oscillations without changing the curve.
 
 Shared-y panels combine their visible ranges, including error bars and crossing
 line segments. Manual y limits are preserved unless `override=True`. Lines,

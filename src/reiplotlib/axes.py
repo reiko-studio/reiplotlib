@@ -20,12 +20,11 @@ def clean_axes(
     grid: bool = True,
     legend: bool = True,
 ) -> Axes:
-    """Hide unused spines, soften ticks, and optionally clean the legend."""
+    """Hide unused spines and optionally clean the legend, preserving ticks."""
 
     visible = set(keep)
     for side, spine in ax.spines.items():
         spine.set_visible(side in visible)
-    ax.tick_params(length=0)
     ax.grid(grid)
 
     if legend:
