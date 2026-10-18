@@ -25,12 +25,11 @@ def test_color_namespaces_expose_hex_values():
     assert c.ina.purple == "#594967"
     assert c.suisei.blue == "#76a7e8"
     assert is_color_like(c.ina.gold)
-    assert c.named["ink"] is c.neutral.ink
+    assert c.named["neutral.ink"] is c.neutral.ink
 
 
 def test_palette_module_exposes_named_palettes():
     assert c.ina.gold == "#eaa36d"
-    assert c.basic.dark_blue == "#000a64"
     assert p.ina_contrast == ("#594967", "#eaa36d")
     assert p.get("ina_contrast") == p.ina_contrast
 

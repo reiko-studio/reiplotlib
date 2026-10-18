@@ -5,7 +5,7 @@ from __future__ import annotations
 from typing import Any
 
 from . import colors as c
-from .palette import Color
+from .colors import Color
 
 ColorLike = str | Color
 

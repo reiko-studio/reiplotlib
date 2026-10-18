@@ -23,27 +23,109 @@ def main():
     destination.mkdir(parents=True, exist_ok=True)
     with rpl.rc_context():
         fig, axes = rpl.layouts.subplots(
-            len(names), 1, width="double", aspect=0.10 * len(names),
+            len(names),
+            1,
+            width="double",
+            aspect=0.058 * len(names),
             layout="constrained",
         )
-        fig.get_layout_engine().set(h_pad=0.01, w_pad=0.02, hspace=0.01)
+        fig.get_layout_engine().set(h_pad=0, w_pad=0.01, hspace=0)
         for name, swatches in zip(names, axes, strict=True):
             palette = p.get(name)
-            swatches.set_title(
-                name.replace("_", r"\_"), loc="left", fontsize=10, pad=1
+            swatches.text(
+                -0.18,
+                0.19,
+                name.replace("_", r"\_"),
+                ha="right",
+                va="center",
+                fontsize=9,
             )
             for i, color in enumerate(palette):
-                swatches.add_patch(Rectangle((i, 0), 0.94, 0.5, color=color))
+                swatches.add_patch(Rectangle((i, 0), 0.97, 0.38, color=color))
                 swatches.text(
-                    i + 0.47, -0.06, str(color).replace("#", r"\#"),
-                    ha="center", va="top", fontsize=6, fontfamily="monospace",
+                    i + 0.485,
+                    -0.04,
+                    str(color).replace("#", r"\#"),
+                    ha="center",
+                    va="top",
+                    fontsize=6,
+                    fontfamily="monospace",
                 )
-            swatches.set(xlim=(-0.05, max_colors), ylim=(-0.20, 0.55))
+            swatches.set(xlim=(-1.25, max_colors), ylim=(-0.23, 0.42))
             swatches.axis("off")
 
         rpl.export.savefig(fig, destination / "palettes", formats=("png",))
         plt.close(fig)
 
 
+def render_neutrals():
+    names = ("ink", "muted", "grid", "paper", "white")
+    destination = Path(__file__).resolve().parents[1] / "docs/images"
+    destination.mkdir(parents=True, exist_ok=True)
+    with rpl.rc_context():
+        fig, ax = rpl.layouts.subplots(
+            width="double", aspect=0.12, layout="constrained"
+        )
+        for i, name in enumerate(names):
+            color = getattr(rpl.colors.neutral, name)
+            ax.add_patch(
+                Rectangle(
+                    (i, 0),
+                    0.96,
+                    0.42,
+                    facecolor=color,
+                    edgecolor=rpl.colors.neutral.grid,
+                    linewidth=0.5,
+                )
+            )
+            ax.text(i + 0.48, -0.05, name, ha="center", va="top", fontsize=9)
+            ax.text(
+                i + 0.48,
+                -0.23,
+                str(color).replace("#", r"\#"),
+                ha="center",
+                va="top",
+                fontsize=7,
+                fontfamily="monospace",
+            )
+        ax.set(xlim=(-0.04, len(names)), ylim=(-0.40, 0.45))
+        ax.axis("off")
+        rpl.export.savefig(fig, destination / "neutrals", formats=("png",))
+        plt.close(fig)
+
+
+def render_families():
+    shades = ("dark", "base", "bright", "light", "pale")
+    destination = Path(__file__).resolve().parents[1] / "docs/images"
+    destination.mkdir(parents=True, exist_ok=True)
+    with rpl.rc_context():
+        fig, ax = rpl.layouts.subplots(
+            width="double", aspect=0.55, layout="constrained"
+        )
+        for column, shade in enumerate(shades):
+            ax.text(column + 0.48, 0.25, shade, ha="center", fontsize=9)
+        for row, (name, family) in enumerate(rpl.colors.families.items()):
+            y = -row * 0.7
+            ax.text(-0.15, y - 0.28, name, ha="right", va="center", fontsize=9)
+            for column, shade in enumerate(shades):
+                color = getattr(family, shade)
+                ax.add_patch(
+                    Rectangle(
+                        (column, y - 0.55),
+                        0.96,
+                        0.55,
+                        facecolor=color,
+                        edgecolor=rpl.colors.neutral.grid,
+                        linewidth=0.3,
+                    )
+                )
+        ax.set(xlim=(-0.8, 5), ylim=(-5.6, 0.65))
+        ax.axis("off")
+        rpl.export.savefig(fig, destination / "color-families", formats=("png",))
+        plt.close(fig)
+
+
 if __name__ == "__main__":
     main()
+    render_neutrals()
+    render_families()
