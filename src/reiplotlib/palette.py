@@ -135,6 +135,32 @@ Palette: TypeAlias = tuple[Color, ...]
 PaletteName: TypeAlias = str
 
 palettes: Mapping[str, Palette] = {
+    # Paul Tol's bright scheme, in the author's recommended cycle order.
+    # https://sronpersonalpages.nl/~pault/#sec:qualitative
+    "tol_bright": (
+        Color("tol_bright.blue", "#4477AA"),
+        Color("tol_bright.red", "#EE6677"),
+        Color("tol_bright.green", "#228833"),
+        Color("tol_bright.yellow", "#CCBB44"),
+        Color("tol_bright.cyan", "#66CCEE"),
+        Color("tol_bright.purple", "#AA3377"),
+        Color("tol_bright.gray", "#BBBBBB"),
+    ),
+    "myth": (
+        Color("myth.gura", "#3887B7"),
+        Color("myth.kiara", "#D56A32"),
+        Color("myth.ina", "#594967"),
+        Color("myth.calliope", "#C75D83"),
+        Color("myth.amelia", "#A68A2D"),
+    ),
+    "grove": (
+        Color("grove.blue", "#3569A8"),
+        Color("grove.ochre", "#BA7336"),
+        Color("grove.teal", "#27847F"),
+        Color("grove.rose", "#B64F6D"),
+        Color("grove.violet", "#7864A4"),
+        Color("grove.olive", "#777C3B"),
+    ),
     "duo": (fubuki.base, mio.base, accent.gold, accent.green),
     "paper": (
         neutral.ink,

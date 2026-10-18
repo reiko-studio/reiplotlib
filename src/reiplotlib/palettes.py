@@ -8,6 +8,11 @@ from cycler import cycler
 
 from . import colors as c
 from .palette import Color
+from .palette import palettes as _palettes
+
+grove = _palettes["grove"]
+myth = _palettes["myth"]
+tol_bright = _palettes["tol_bright"]
 
 duo = (c.fubuki.base, c.mio.base, c.accent.gold, c.accent.green)
 paper = (
@@ -50,6 +55,9 @@ ina_dark_contrast = (c.ina.purple_dark, c.ina.gold_dark)
 suisei = (c.suisei.blue, c.suisei.blue_dark)
 
 named = {
+    "tol_bright": tol_bright,
+    "myth": myth,
+    "grove": grove,
     "duo": duo,
     "paper": paper,
     "soft": soft,
@@ -76,6 +84,9 @@ def cycle(palette: str | Iterable[str] = "duo"):
 
 
 __all__ = [
+    "tol_bright",
+    "myth",
+    "grove",
     "basic",
     "contrast",
     "cycle",

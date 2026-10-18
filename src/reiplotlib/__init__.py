@@ -15,6 +15,8 @@ from .palette import (
     cycle,
     palette,
 )
+from .plotting import errorbar
+from .autoscale import autoscale_y
 from .style import STYLE, apply_style, rc_context
 
 __all__ = [
@@ -22,6 +24,7 @@ __all__ = [
     "Palette",
     "STYLE",
     "apply_style",
+    "autoscale_y",
     "clean_axes",
     "clean_legend",
     "color",
@@ -29,6 +32,7 @@ __all__ = [
     "cycle",
     "drop_axis_labels",
     "export",
+    "errorbar",
     "label_panel",
     "layouts",
     "options",
