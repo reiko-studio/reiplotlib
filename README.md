@@ -36,19 +36,20 @@ and LaTeX labels. The bands below are illustrative widths, not estimated errors.
 ```python
 import numpy as np
 import reiplotlib as rpl
-from reiplotlib import layouts as layout, options as o, palettes as p
+from reiplotlib import layouts as layout, options as o
 
 x = np.linspace(0, 12, 400)
 
 with rpl.rc_context({"text.usetex": True}):
     fig, ax = layout.subplots(width="double", aspect=0.46, layout="constrained")
-    for tau, color in zip((1.5, 3.0, 6.0), p.grove[:3]):
+    for tau in (1.5, 3.0, 6.0):
         envelope = np.exp(-x / tau)
         y = envelope * np.cos(2 * np.pi * x / 4)
         band = 0.06 * envelope
-        ax.fill_between(x, y - band, y + band, **o.fill(color, alpha=0.16))
-        ax.plot(x, y, label=rf"$\tau={tau:g}$",
-                **o.markerline(color, markevery=32, linewidth=1.5))
+        line, = ax.plot(x, y, label=rf"$\tau={tau:g}$",
+                        marker="o", markersize=3, markevery=32, linewidth=1.5)
+        ax.fill_between(x, y - band, y + band,
+                        **o.fill(line.get_color(), alpha=0.16))
     ax.axhline(0, color=rpl.colors.neutral.muted, lw=0.7, ls=":")
     ax.set(xlim=(0, 12), xlabel=r"Time, $t$",
            ylabel=r"Response, $C(t)$",
@@ -63,7 +64,8 @@ with rpl.rc_context({"text.usetex": True}):
 This saves `figures/response.png` and `figures/response.pdf`. The context applies
 reiplotlib's style while making and saving the figure, then restores your previous
 Matplotlib settings. The default style uses neutral text and axes with Grove
-series colors; here the colors are explicit so each band matches its curve.
+series colors. Lines automatically advance through Grove; each band reuses its
+line's assigned color.
 
 This example requires a working LaTeX installation. The style loads `amsfonts`
 and configures `pdflatex` for PGF output. For a preview without LaTeX, change the
