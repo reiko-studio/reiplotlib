@@ -1,4 +1,9 @@
-"""Reusable matplotlib keyword option presets."""
+"""Reusable Matplotlib keyword presets.
+
+Omitting color leaves its selection to Matplotlib's axes cycle. Explicit colors
+are passed through unchanged. Line and patch artists use Matplotlib's respective
+cycles; use rpl.shade to match a band to its preceding line.
+"""
 
 from __future__ import annotations
 
@@ -14,12 +19,16 @@ def _with_overrides(
     defaults: dict[str, Any],
     overrides: dict[str, Any],
 ) -> dict[str, Any]:
-    opts = defaults.copy()
+    opts = {
+        key: value
+        for key, value in defaults.items()
+        if key != "color" or value is not None
+    }
     opts.update(overrides)
     return opts
 
 
-def line(color: ColorLike = c.fubuki.base, **overrides: Any) -> dict[str, Any]:
+def line(color: ColorLike | None = None, **overrides: Any) -> dict[str, Any]:
     """Return common keyword options for line plots."""
 
     return _with_overrides(
@@ -32,7 +41,7 @@ def line(color: ColorLike = c.fubuki.base, **overrides: Any) -> dict[str, Any]:
     )
 
 
-def markers(color: ColorLike = c.fubuki.base, **overrides: Any) -> dict[str, Any]:
+def markers(color: ColorLike | None = None, **overrides: Any) -> dict[str, Any]:
     """Return common keyword options for marker-only line plots."""
 
     return _with_overrides(
@@ -46,7 +55,7 @@ def markers(color: ColorLike = c.fubuki.base, **overrides: Any) -> dict[str, Any
     )
 
 
-def markerline(color: ColorLike = c.fubuki.base, **overrides: Any) -> dict[str, Any]:
+def markerline(color: ColorLike | None = None, **overrides: Any) -> dict[str, Any]:
     """Return common keyword options for marker-only line plots."""
 
     return _with_overrides(
@@ -60,7 +69,7 @@ def markerline(color: ColorLike = c.fubuki.base, **overrides: Any) -> dict[str, 
     )
 
 
-def scatter(color: ColorLike = c.fubuki.base, **overrides: Any) -> dict[str, Any]:
+def scatter(color: ColorLike | None = None, **overrides: Any) -> dict[str, Any]:
     """Return common keyword options for scatter plots."""
 
     return _with_overrides(
@@ -74,7 +83,7 @@ def scatter(color: ColorLike = c.fubuki.base, **overrides: Any) -> dict[str, Any
     )
 
 
-def errorbar(color: ColorLike = c.fubuki.base, **overrides: Any) -> dict[str, Any]:
+def errorbar(color: ColorLike | None = None, **overrides: Any) -> dict[str, Any]:
     """Return common keyword options for errorbar plots."""
 
     return _with_overrides(
@@ -91,7 +100,7 @@ def errorbar(color: ColorLike = c.fubuki.base, **overrides: Any) -> dict[str, An
     )
 
 
-def fill(color: ColorLike = c.fubuki.base, **overrides: Any) -> dict[str, Any]:
+def fill(color: ColorLike | None = None, **overrides: Any) -> dict[str, Any]:
     """Return common keyword options for filled regions."""
 
     return _with_overrides(
@@ -104,7 +113,7 @@ def fill(color: ColorLike = c.fubuki.base, **overrides: Any) -> dict[str, Any]:
     )
 
 
-def hist(color: ColorLike = c.fubuki.base, **overrides: Any) -> dict[str, Any]:
+def hist(color: ColorLike | None = None, **overrides: Any) -> dict[str, Any]:
     """Return common keyword options for histograms."""
 
     return _with_overrides(

@@ -26,6 +26,7 @@ def main():
             for heading, stem in (
                 ("## A first figure", "response"),
                 ("### Your own color", "custom-color"),
+                ("## A figure with two panels", "panels"),
                 ("### Shaded bands", "shading"),
                 ("### Error bars", "errorbars"),
                 ("### Visible limits", "autoscale"),

@@ -1,12 +1,10 @@
 # reiplotlib
 
-Small Matplotlib helpers for scientific figures: color palettes, LaTeX styling,
-publication sizes, adaptive error bars, and PNG/PDF export. Use regular Matplotlib
-axes and add the pieces you need.
+Reiplotlib is a collection of Matplotlib utilities, styles, and slightly opinionated presets for consistent, publication-ready figures.
 
 Part of **Reiko Studio**.
 
-![The same damped oscillations with default Matplotlib on the left and reiplotlib styling on the right](docs/images/style-comparison.png)
+<img src="docs/images/style-comparison.png" alt="The same damped oscillations with default Matplotlib on the left and reiplotlib styling on the right" width="720">
 
 ## Installation
 
@@ -14,51 +12,51 @@ Part of **Reiko Studio**.
 pip install git+https://github.com/reiko-studio/reiplotlib.git
 ```
 
-Requires Python ≥3.10 and Matplotlib ≥3.7. LaTeX rendering is enabled by default;
-set `text.usetex` to `False` to use Matplotlib's built-in text rendering.
+You will need Python ≥3.10 and Matplotlib ≥3.7. The default style uses LaTeX,
+so a distribution such as [TeX Live](https://www.tug.org/texlive/),
+[MacTeX](https://www.tug.org/mactex/), or [MiKTeX](https://miktex.org/) should also
+be installed. If it is not available and/or you prefer Matplotlib's own text rendering, set
+`text.usetex` to `False` in the style context below.
 
 ## A first figure
 
-Plot three damped oscillations with matching shaded bands. Grove supplies the
-line colors automatically; `line.get_color()` gives each band the same color.
-The bands here are illustrative, not estimated uncertainties.
+We can start with a few damped oscillations. Most of this is ordinary Matplotlib:
+reiplotlib sets the style and figure size, and each line takes its next color
+from the Grove palette.
 
 ```python
 import numpy as np
 import reiplotlib as rpl
-from reiplotlib import layouts as layout, options as o
+from reiplotlib import layouts as layout
 
 x = np.linspace(0, 12, 400)
 
 with rpl.rc_context({"text.usetex": True}):
-    fig, ax = layout.subplots(width="double", aspect=0.46, layout="constrained")
+    fig, ax = layout.subplots(width="single", aspect=0.75, layout="constrained")
     for tau in (1.5, 3.0, 6.0):
-        envelope = np.exp(-x / tau)
-        y = envelope * np.cos(2 * np.pi * x / 4)
-        band = 0.06 * envelope
-        line, = ax.plot(x, y, label=rf"$\tau={tau:g}$",
-                        marker="o", markersize=3, markevery=32, linewidth=1.5)
-        ax.fill_between(x, y - band, y + band,
-                        **o.fill(line.get_color(), alpha=0.16))
-    ax.axhline(0, color=rpl.colors.neutral.muted, lw=0.7, ls=":")
+        y = np.exp(-x / tau) * np.cos(2 * np.pi * x / 4)
+        ax.plot(x, y, label=rf"$\tau={tau:g}$")
     ax.set(xlim=(0, 12), xlabel=r"Time, $t$",
-           ylabel=r"Response, $C(t)$",
-           title=r"$C(t)=e^{-t/\tau}\cos(\pi t/2)$")
+           ylabel=r"Response, $C(t)$")
     rpl.clean_axes(ax, grid=False)
-    rpl.clean_legend(ax, ncols=3, loc="upper right")
+    rpl.clean_legend(ax)
     rpl.export.savefig(fig, "figures/response")
 ```
 
-Run this with a working LaTeX installation to save `figures/response.png` and
-`figures/response.pdf`. `rc_context()` restores your Matplotlib settings when the
-block ends. To style an entire script instead, call `rpl.apply_style()` once.
+<img src="docs/images/response.png" alt="Three damped oscillations using the default Grove colors in a single-column figure" width="360">
+
+By default, the figure is saved as both PNG `figures/response.png` and PDF `figures/response.pdf`, 
+this is to make it simple to import a vectorize version into LaTeX and a rasterized version 
+for a slide deck. 
+
+Keeping the work inside `rc_context()` lets us use the style for this figure
+without changing the rest of the session. For a script where every figure should
+look the same, `rpl.apply_style()` applies it once at the beginning.
 
 ## Palettes
 
-![Categorical palettes and their hex codes](docs/images/palettes.png)
 
-Grove is the default series cycle. Text and axes use neutral ink, with white
-backgrounds and gray gridlines. Choose another palette before plotting:
+Reiplotlib has a few curated palettes, grove is the default, but a different palette can give the same figure a rather different character. Set it on the axes before drawing the lines:
 
 ```python
 from reiplotlib import palettes as p
@@ -67,20 +65,24 @@ rpl.use_palette(ax, p.myth)
 ax.plot(x, y)
 ```
 
-Use `p.grove[0]` for an explicit color or `p.get("grove")` to look up a palette
-by name. Each entry is a string accepted by Matplotlib. Cycles repeat after the
-last color; markers and line styles help distinguish larger sets of curves.
+<img src="docs/images/palettes.png" alt="Categorical palettes and their hex codes" width="720">
+
+Individual colors are available too: `p.grove[0]` is the first color, and
+`p.get("grove")` retrieves the palette by name. These are ordinary color strings,
+so they can be used anywhere Matplotlib expects a color. Once a cycle runs out,
+it starts again; for many curves, different markers or line styles help.
 
 Paper combines ink and gray with teal, burgundy, gold, and green. Myth draws on
-Hololive Myth's member colors, adapted for plotting on white rather than using
-official color specifications. Contrast and Duo offer smaller sets.
+[Hololive Myth's](https://hololive.hololivepro.com/en/talents?gp=myth) member colors, adapted for plotting .
+Contrast and Duo offer smaller sets.
 [Tol Bright](https://sronpersonalpages.nl/~pault/#sec:qualitative) uses Paul Tol's
-seven published colors and recommended order. Tol documents its color-vision
-accessibility; the custom palettes have not been independently validated.
+seven published colors and recommended order.
 
 ## Named colors
 
-Pick a color family directly, or choose a shade:
+Sometimes a curve needs a particular color, or a shaded region needs to belong
+to the same family as its outline. The named colors give us a few shades to
+choose from:
 
 ```python
 from reiplotlib import colors as c
@@ -90,17 +92,18 @@ ax.plot(x, y_reference, color=c.blue.dark)
 ax.fill_between(x, lo, hi, color=c.red.pale)
 ```
 
-![Named color families with dark, base, bright, light, and pale shades](docs/images/color-families.png)
+<img src="docs/images/color-families.png" alt="Named color families with dark, base, bright, light, and pale shades" width="720">
 
-Each family is a color string: `c.red` and `c.red.base` have the same value.
-Shades are attributes: `.dark`, `.base`, `.bright`, `.light`, and `.pale`.
-Use base and dark shades for lines, bright shades for accents, and light or pale
-shades for fills. These are curated choices, not uniform numerical color scales.
-`c.named["red.dark"]` looks up a shade; `c.families` lists the eight families.
+`c.red` is shorthand for the base color. The darker shades work well for lines
+and outlines, while the light and pale shades leave room for other information
+when used as fills. Each family has `.dark`, `.base`, `.bright`, `.light`, and
+`.pale`; these shades are chosen individually.
+For lookup by name, use `c.named["red.dark"]` or browse `c.families`.
 
 ### Your own color
 
-`NamedColor` builds a shade family from any opaque hex color:
+If you already have a color in mind, `NamedColor` can suggest a family around it.
+The generated shades are a starting point, and any of them can be adjusted:
 
 ```python
 custom = rpl.NamedColor("#467A9B")
@@ -119,24 +122,24 @@ with rpl.rc_context({"text.usetex": True}):
     rpl.export.savefig(fig, "figures/custom-color")
 ```
 
-![A custom generated color family used for lines and a filled region](docs/images/custom-color.png)
+<img src="docs/images/custom-color.png" alt="A custom generated color family used for lines and a filled region" width="360">
 
-The constructor accepts `#RGB` or `#RRGGBB`. `.dark` mixes 35% black into the
-base; `.light` and `.pale` mix in 55% and 85% white in sRGB. `.bright` moves HLS
-saturation 25% toward full saturation and lightness 10% toward white. These are
-best-effort shades, not a perceptually uniform scale.
+Starting from a `#RGB` or `#RRGGBB` value, the darker shade mixes in 35% black;
+the light and pale shades mix in 55% and 85% white in sRGB. The bright shade
+increases HLS saturation and lightness toward their maxima by 25% and 10%.
+This is a simple approximation, so some starting colors will need more
+adjustment than others.
 
-All five attributes are editable. Setting `custom.base = "#B64F7C"` regenerates
-the whole family, replacing previous overrides. Set individual shades afterward.
-Use `custom` directly with Matplotlib, or `custom.base` for a hex string. Changes
-apply to subsequent plotting calls; update existing artists explicitly with
-`line.set_color(custom.base)`.
+Changing `custom.base` generates a fresh family, so make any individual shade
+adjustments afterward. `custom` itself works as a Matplotlib color, while
+`custom.base` gives its hex string. To recolor a line that has already been
+drawn, use `line.set_color(custom.base)`.
 
 ### Neutrals
 
-The neutral family covers text, reference lines, backgrounds, and grids.
+For text and the quieter parts of a figure, there is a small neutral family:
 
-![Neutral named colors: ink, muted, grid, paper, and white](docs/images/neutrals.png)
+<img src="docs/images/neutrals.png" alt="Neutral named colors: ink, muted, grid, paper, and white" width="720">
 
 ```python
 from reiplotlib import colors as c
@@ -146,18 +149,25 @@ ax.set_facecolor(c.neutral.paper)
 ax.set_title("Response", color=c.neutral.ink)
 ```
 
-Use `ink` for text and outlines, `muted` for secondary annotations, and `grid`
-for light guides. `paper` is a warm off-white; `white` is pure white. All are
-ordinary color strings and work directly with Matplotlib.
+The default style uses `ink` for text and outlines, `white` for the background,
+and `grid` for gridlines. `muted` is useful for reference lines and secondary
+annotations; `paper` gives a slightly warmer background when pure white feels
+too stark.
 
 ## Size and style
 
-`layouts.subplots()` accepts a `journal` preset and single- or double-column
-widths. PRL (`journal="prl"`) is the default and currently the only preset;
-more journal sizes are planned. `aspect` is height divided by width; other
-arguments pass through to Matplotlib.
+Journal figures need to fit the manuscript's columns while keeping their labels
+readable alongside the surrounding text. Resizing a finished plot also scales
+its fonts, markers, and line widths, so a figure that looked balanced on screen
+may feel quite different on the page. Starting at the intended size makes these
+choices easier to judge and leaves less to adjust when inserting the figure.
 
-![Figure sizes drawn to a common scale: single column, double column with two panels, and a custom size](docs/images/sizing.png)
+Reiplotlib provides column widths through the `journal` argument to
+`layouts.subplots()`. Choose a single- or double-column figure and set its
+height with `aspect`, the ratio of height to width. PRL (`journal="prl"`) is
+the current preset; more journal sizes are planned.
+
+<img src="docs/images/sizing.png" alt="Figure sizes drawn to a common scale: single column, double column with two panels, and a custom size" width="720">
 
 ```python
 from reiplotlib import layouts as layout
@@ -167,38 +177,83 @@ fig, axs = layout.subplots(1, 2, journal="prl", width="double", aspect=0.45)
 fig, ax = layout.subplots(figsize=(3.3, 3.0))
 ```
 
-Single-column width is 243 TeX points (3.36 inches); double-column width is
-486 points (6.72 inches). Width and aspect describe the whole figure, including
-all panels. The sketches use a common scale; dashed boxes indicate plot areas.
+For the PRL preset, the widths are 243 TeX points (3.36 inches) for a single
+column and 486 points (6.72 inches) for two columns. The size applies to the
+whole figure, including all panels. In the sketches above, the outer rectangles
+share a common scale and the dashed boxes indicate the plot areas.
 
-An explicit `figsize` takes precedence.
-`layout.size("single", journal="prl", aspect=0.75)`
-returns dimensions in inches for use with `plt.subplots()`.
-These are figure canvas dimensions; tight cropping during export can change
-the saved bounds. Use `bbox_inches=None` when the exported size must be exact.
+You can also supply `figsize` directly, which takes precedence over the preset.
+If you prefer creating axes with `plt.subplots()`,
+`layout.size("single", journal="prl", aspect=0.75)` returns the corresponding
+dimensions in inches. These describe the figure canvas; tight cropping can
+change the saved bounds, so pass `bbox_inches=None` when exporting to preserve
+the exact dimensions.
 
-Option presets return keyword dictionaries for ordinary plotting calls:
+The option presets are already curated to choose line widths, marker and scatter sizes, 
+error-bar caps, and fill opacity with paper figures in mind. You can use them as they are,
+without tuning each element separately:
 
 ```python
-ax.plot(x, y, **o.line(p.grove[0], linewidth=1.2, linestyle="--"))
-ax.scatter(x, y, **o.scatter(p.grove[1], s=12))
-ax.fill_between(x, lo, hi, **o.fill(p.grove[0], alpha=0.2))
+from reiplotlib import options as o
+
+ax.plot(x, y, **o.line())
+ax.scatter(x, y, **o.scatter())
+ax.fill_between(x, lo, hi, **o.fill())
 ```
 
-Pass a color explicitly when using these presets; they carry their own color
-rather than advancing the axes cycle. Use `ax.plot(x, y)` for automatic colors.
+They return ordinary keyword dictionaries, so an occasional adjustment is still
+easy: `o.line(linewidth=1.2, linestyle="--")`. Without a color argument,
+Matplotlib chooses from the axes' palette. You can still choose one explicitly,
+as in `o.line(c.blue)`. Lines and fills follow Matplotlib's separate cycles;
+use `rpl.shade()` when a band should match the line you just drew.
 
-`rpl.clean_axes(ax, grid=False)` removes the top and right spines, keeping ticks.
-`rpl.clean_legend(ax)` makes a compact legend from labeled artists. For panels,
-use `rpl.label_panel(ax, "A")`; `rpl.percent_axis(ax, axis="y")` formats fractions
-as percentages.
+For a lighter frame, `rpl.clean_axes(ax, grid=False)` removes the top and right
+spines while keeping the ticks. `rpl.clean_legend(ax)` gathers labeled artists
+into a compact legend. Panel labels can be added with `rpl.label_panel(ax, "A")`,
+and fractions can be displayed as percentages with `rpl.percent_axis(ax, axis="y")`.
+
+## A figure with two panels
+
+For related plots, we can give each panel its own label while keeping the
+colors and horizontal scale in common. Here the same three timescales appear
+as a relaxation curve on the left and its accumulated response on the right:
+
+```python
+from reiplotlib import options as o
+
+with rpl.rc_context({"text.usetex": True}):
+    fig, axes = layout.subplots(1, 2, width="double", aspect=0.40,
+                               layout="constrained", sharex=True)
+    x = np.linspace(0, 6, 200)
+    for tau in (0.5, 1.0, 2.0):
+        y = np.exp(-x / tau)
+        axes[0].plot(x, y, label=rf"$\tau={tau:g}$", **o.line())
+        axes[1].plot(x, tau * (1 - y), **o.line())
+
+    for ax, label in zip(axes, ("(a)", "(b)")):
+        ax.set(xlabel=r"Time, $t$", xlim=(0, 6))
+        rpl.clean_axes(ax, grid=False)
+        rpl.label_panel(ax, label, x=0.03, y=0.96)
+    axes[0].set_ylabel(r"$C(t)=e^{-t/\tau}$")
+    axes[1].set_ylabel(r"$\int_0^t C(s)\,\mathrm{d}s$")
+    handles, labels = axes[0].get_legend_handles_labels()
+    fig.legend(handles, labels, loc="outside upper center", ncols=3)
+    rpl.export.savefig(fig, "figures/panels")
+```
+
+<img src="docs/images/panels.png" alt="Two labeled panels showing relaxation curves and their integrals with matching colors" width="720">
+
+Each axes starts with the same color cycle, so plotting the timescales in the
+same order keeps their colors consistent. `label_panel()` places text in axes
+coordinates; adjust `x` and `y` to move a label inside or outside its panel.
 
 ## Error bars and limits
 
 ### Shaded bands
 
-Plot a line, then pass its uncertainties to `shade()`. The band takes the most
-recent line's color unless you supply `color=`.
+Once a line is drawn, `shade()` can add a band using the same color. A single
+width gives a symmetric band; separate lower and upper widths allow it to be
+asymmetric:
 
 ```python
 with rpl.rc_context({"text.usetex": True}):
@@ -223,7 +278,7 @@ with rpl.rc_context({"text.usetex": True}):
     rpl.export.savefig(fig, "figures/shading")
 ```
 
-![Symmetric and asymmetric shaded bands rendered with LaTeX](docs/images/shading.png)
+<img src="docs/images/shading.png" alt="Symmetric and asymmetric shaded bands rendered with LaTeX" width="720">
 
 `yerr` accepts a scalar, an array of symmetric widths, or a `(2, N)` array of
 lower and upper widths. Widths are nonnegative distances from `y`, not absolute
@@ -233,9 +288,13 @@ bounds; pass whichever standard deviations or interval widths you computed.
 
 ### Error bars
 
-Draw uncertainties with `rpl.errorbar()`:
+Small error bars can clutter a figure when their caps are wider than the
+uncertainty itself. `rpl.errorbar()` can hide bars that fit inside their markers.
+Hollow markers make the difference easier to see:
 
 ```python
+from reiplotlib import options as o
+
 with rpl.rc_context({"text.usetex": True}):
     fig, axes = layout.subplots(1, 2, width="double", aspect=0.40,
                                layout="constrained", sharex=True, sharey=True)
@@ -256,7 +315,7 @@ with rpl.rc_context({"text.usetex": True}):
     rpl.export.savefig(fig, "figures/errorbars")
 ```
 
-![Hollow markers with adaptive error hiding on the left and every error bar on the right](docs/images/errorbars.png)
+<img src="docs/images/errorbars.png" alt="Hollow markers with adaptive error hiding on the left and every error bar on the right" width="720">
 
 Both panels use the same estimates and uncertainties. Hollow markers make small
 bars visible in the right panel; adaptive hiding removes those shorter than the
@@ -270,8 +329,9 @@ at creation; recreate the artist to change the data.
 
 ### Visible limits
 
-Setting x limits alone leaves Matplotlib's y range based on the full curve.
-Use `autoscale_y()` to fit the portion you are looking at:
+When we zoom into the tail of a curve, an earlier peak can leave a lot of empty
+space on the y axis. Setting the x limits does not recalculate that range;
+`autoscale_y()` fits it to the part of the curve still in view:
 
 ```python
 with rpl.rc_context({"text.usetex": True}):
@@ -290,7 +350,7 @@ with rpl.rc_context({"text.usetex": True}):
     rpl.export.savefig(fig, "figures/autoscale")
 ```
 
-![The same visible x range with default y limits and automatic visible-range y limits](docs/images/autoscale.png)
+<img src="docs/images/autoscale.png" alt="The same visible x range with default y limits and automatic visible-range y limits" width="720">
 
 The large initial peak is outside both panels. Fitting the y limits to the
 visible data reveals the small oscillations without changing the curve.
@@ -309,8 +369,9 @@ rpl.export.savefig(fig, "figures/draft", formats=("png",))  # PNG only
 rpl.export.saveclose(fig, "figures/response")               # Save and close
 ```
 
-Parent directories are created automatically. Save inside the style context so
-LaTeX and other temporary settings also apply during export. Standard Matplotlib
-save options, such as `transparent=True` or `bbox_inches=None`, pass through.
+The export helper creates the output directory if needed. Keep the save call
+inside the style context so LaTeX and the other settings are still active when
+the figure is rendered. Matplotlib's usual save options also work here, including
+`transparent=True` and `bbox_inches=None`.
 
 [MIT license](LICENSE).
