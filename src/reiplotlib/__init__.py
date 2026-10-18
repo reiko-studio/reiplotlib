@@ -11,6 +11,7 @@ from .axes import (
     use_palette,
 )
 from .colors import Color, ColorFamily, NamedColor
+from .legends import axes_legend, collect_legend, figure_legend
 from .palettes import Palette, cycle
 from .palettes import get as palette
 from .plotting import errorbar, shade
@@ -26,12 +27,15 @@ __all__ = [
     "SeriesStyle",
     "apply_style",
     "autoscale_y",
+    "axes_legend",
     "clean_axes",
     "clean_legend",
     "colors",
+    "collect_legend",
     "cycle",
     "drop_axis_labels",
     "export",
+    "figure_legend",
     "errorbar",
     "label_panel",
     "layouts",

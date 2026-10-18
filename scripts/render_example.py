@@ -28,6 +28,8 @@ def main():
                 ("### Your own color", "custom-color"),
                 ("## A figure with two panels", "panels"),
                 ("## Keeping series consistent", "series-styles"),
+                ("## Shared legends", "shared-legends"),
+                ("### A shared legend inside one panel", "panel-legend"),
                 ("### Shaded bands", "shading"),
                 ("### Error bars", "errorbars"),
                 ("### Visible limits", "autoscale"),
