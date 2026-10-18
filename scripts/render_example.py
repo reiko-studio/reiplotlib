@@ -27,6 +27,7 @@ def main():
                 ("## A first figure", "response"),
                 ("### Your own color", "custom-color"),
                 ("## A figure with two panels", "panels"),
+                ("## Keeping series consistent", "series-styles"),
                 ("### Shaded bands", "shading"),
                 ("### Error bars", "errorbars"),
                 ("### Visible limits", "autoscale"),

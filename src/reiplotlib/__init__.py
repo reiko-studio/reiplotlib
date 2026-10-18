@@ -14,6 +14,7 @@ from .colors import Color, ColorFamily, NamedColor
 from .palettes import Palette, cycle
 from .palettes import get as palette
 from .plotting import errorbar, shade
+from .series import SeriesStyle
 from .style import STYLE, apply_style, rc_context
 
 __all__ = [
@@ -22,6 +23,7 @@ __all__ = [
     "NamedColor",
     "Palette",
     "STYLE",
+    "SeriesStyle",
     "apply_style",
     "autoscale_y",
     "clean_axes",
