@@ -11,6 +11,38 @@ from matplotlib.container import ErrorbarContainer
 from matplotlib.markers import MarkerStyle
 
 
+def shade(ax: Axes, x, y, yerr, **kwargs: Any):
+    """Fill an uncertainty band around y, returning ax.fill_between's artist.
+
+    ``yerr`` is a nonnegative scalar or length-N sequence for symmetric widths,
+    or shape (2, N) for lower/upper widths, as in Matplotlib errorbar. Widths are
+    distances from y, not absolute bounds. NaNs and masks produce gaps.
+
+    Defaults to alpha=0.2 and no outline. Without an explicit color, reuse the
+    most recently plotted line's color, if present. Other keywords (including
+    where, step, interpolate and label) pass through to fill_between. This draws
+    only the band; it does not compute statistics or plot a central line.
+    """
+    values = np.ma.asarray(y)
+    errors = np.ma.asarray(yerr)
+    if values.ndim > 1:
+        raise ValueError("y must be a scalar or one-dimensional sequence")
+    if errors.ndim <= 1:
+        lower = upper = errors
+    elif errors.ndim == 2 and errors.shape[0] == 2:
+        lower, upper = errors
+    else:
+        raise ValueError("yerr must be scalar, shape (N,), or shape (2, N)")
+    if np.any(errors < 0):
+        raise ValueError("yerr must contain nonnegative widths")
+    kwargs.setdefault("alpha", 0.2)
+    kwargs.setdefault("linewidth", 0)
+    if not any(key in kwargs for key in ("color", "facecolor", "facecolors", "fc")):
+        if ax.lines:
+            kwargs["color"] = ax.lines[-1].get_color()
+    return ax.fill_between(x, values - lower, values + upper, **kwargs)
+
+
 class _AdaptiveErrorbarContainer(ErrorbarContainer):
     """An ordinary errorbar container with a removable visibility controller."""
 

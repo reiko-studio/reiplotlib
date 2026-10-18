@@ -53,3 +53,51 @@ def test_removed_basic_names_are_not_exposed():
     assert not hasattr(p, "basic")
     with pytest.raises(KeyError):
         p.get("basic")
+
+
+@pytest.mark.parametrize("hex", ["#467A9B", "#abc", "#000000", "#FFFFFF"])
+def test_generated_color_is_valid_and_mutable_without_cached_base(hex):
+    color = rpl.NamedColor(hex)
+    np.testing.assert_allclose(to_rgba(color), to_rgba(hex))
+    for shade in ("dark", "base", "bright", "light", "pale"):
+        assert len(getattr(color, shade)) == 7
+        assert to_rgba(getattr(color, shade))[3] == 1
+    color.dark = "#123"
+    assert color.dark == "#112233"
+    assert to_rgba(color) == to_rgba(hex)
+    color.base = "#B64F7C"
+    assert color.dark != "#112233"
+    assert color.hex == "#B64F7C"
+    assert to_rgba(color) == to_rgba("#B64F7C")
+
+
+@pytest.mark.parametrize("bad", ["red", "123456", "#12", "#GGGGGG", "#12345678", None])
+def test_generated_color_rejects_invalid_hex_without_partial_mutation(bad):
+    with pytest.raises(ValueError):
+        rpl.NamedColor(bad)
+    color = rpl.NamedColor("#467A9B")
+    before = (color.base, color.dark, color.light)
+    with pytest.raises(ValueError):
+        color.base = bad
+    with pytest.raises(ValueError):
+        color.dark = bad
+    assert (color.base, color.dark, color.light) == before
+
+
+def test_generated_color_renders_and_artist_can_be_updated(tmp_path):
+    color = c.NamedColor("#467A9B")
+    fig, ax = plt.subplots()
+    try:
+        (line,) = ax.plot([0, 1], [0, 1], color=color)
+        ax.scatter([0.5], [0.5], color=color.bright)
+        ax.fill_between([0, 1], [0, 0], [1, 1], color=color.pale)
+        fig.canvas.draw()
+        color.base = "#B64F7C"
+        line.set_color(color.base)
+        fig.canvas.draw()
+        assert to_rgba(line.get_color()) == to_rgba(color.base)
+        rpl.export.savefig(fig, tmp_path / "custom")
+        assert (tmp_path / "custom.png").stat().st_size > 0
+        assert (tmp_path / "custom.pdf").stat().st_size > 0
+    finally:
+        plt.close(fig)

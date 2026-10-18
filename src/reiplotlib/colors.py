@@ -3,7 +3,7 @@
 from dataclasses import dataclass
 from types import MappingProxyType
 
-from ._color import Color, ColorFamily
+from ._color import Color, ColorFamily, NamedColor
 
 
 @dataclass(frozen=True)
@@ -172,6 +172,7 @@ named = MappingProxyType(
 __all__ = [
     "Color",
     "ColorFamily",
+    "NamedColor",
     "families",
     "named",
     "neutral",

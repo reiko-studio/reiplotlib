@@ -10,15 +10,16 @@ from .axes import (
     percent_axis,
     use_palette,
 )
-from .colors import Color, ColorFamily
+from .colors import Color, ColorFamily, NamedColor
 from .palettes import Palette, cycle
 from .palettes import get as palette
-from .plotting import errorbar
+from .plotting import errorbar, shade
 from .style import STYLE, apply_style, rc_context
 
 __all__ = [
     "Color",
     "ColorFamily",
+    "NamedColor",
     "Palette",
     "STYLE",
     "apply_style",
@@ -37,5 +38,6 @@ __all__ = [
     "palettes",
     "percent_axis",
     "rc_context",
+    "shade",
     "use_palette",
 ]

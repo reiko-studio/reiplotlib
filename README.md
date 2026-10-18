@@ -98,6 +98,42 @@ Use base and dark shades for lines, bright shades for accents, and light or pale
 shades for fills. These are curated choices, not uniform numerical color scales.
 `c.named["red.dark"]` looks up a shade; `c.families` lists the eight families.
 
+### Your own color
+
+`NamedColor` builds a shade family from any opaque hex color:
+
+```python
+custom = rpl.NamedColor("#467A9B")
+custom.dark = "#233F59"  # Override one generated shade.
+
+with rpl.rc_context({"text.usetex": True}):
+    fig, ax = layout.subplots(width="single", aspect=0.65, layout="constrained")
+    x = np.linspace(0, 6, 200)
+    y = np.exp(-x / 2)
+    ax.fill_between(x, 0, y, color=custom.pale)
+    ax.plot(x, y, color=custom, label=r"$e^{-t/2}$")
+    ax.plot(x, 0.8 * y, color=custom.dark, ls="--", label=r"$0.8e^{-t/2}$")
+    ax.set(xlabel=r"Time, $t$", ylabel="Response", xlim=(0, 6), ylim=(0, 1.05))
+    rpl.clean_axes(ax, grid=False)
+    rpl.clean_legend(ax)
+    rpl.export.savefig(fig, "figures/custom-color")
+```
+
+![A custom generated color family used for lines and a filled region](docs/images/custom-color.png)
+
+The constructor accepts `#RGB` or `#RRGGBB`. `.dark` mixes 35% black into the
+base; `.light` and `.pale` mix in 55% and 85% white in sRGB. `.bright` moves HLS
+saturation 25% toward full saturation and lightness 10% toward white. These are
+best-effort shades, not a perceptually uniform scale.
+
+All five attributes are editable. Setting `custom.base = "#B64F7C"` regenerates
+the whole family, replacing previous overrides. Set individual shades afterward.
+Use `custom` directly with Matplotlib, or `custom.base` for a hex string. Changes
+apply to subsequent plotting calls; update existing artists explicitly with
+`line.set_color(custom.base)`.
+
+### Neutrals
+
 The neutral family covers text, reference lines, backgrounds, and grids.
 
 ![Neutral named colors: ink, muted, grid, paper, and white](docs/images/neutrals.png)
@@ -114,24 +150,29 @@ Use `ink` for text and outlines, `muted` for secondary annotations, and `grid`
 for light guides. `paper` is a warm off-white; `white` is pure white. All are
 ordinary color strings and work directly with Matplotlib.
 
-The former `c.basic` colors and `palettes.basic` have been removed. Use the shade
-families instead. Imports use `reiplotlib.colors` and `reiplotlib.palettes`;
-the old singular modules have been removed. Named lookups use dotted names such
-as `"neutral.ink"`. Palette lookup and cycle helpers default to Grove.
-
 ## Size and style
 
 `layouts.subplots()` uses PRL single- and double-column widths. `aspect` is height
 divided by width; other arguments pass through to Matplotlib.
 
+![Figure sizes drawn to a common scale: single column, double column with two panels, and a custom size](docs/images/sizing.png)
+
 ```python
+from reiplotlib import layouts as layout
+
 fig, ax = layout.subplots(width="single", aspect=0.75)
 fig, axs = layout.subplots(1, 2, width="double", aspect=0.45)
 fig, ax = layout.subplots(figsize=(3.3, 3.0))
 ```
 
+Single-column width is 243 TeX points (3.36 inches); double-column width is
+486 points (6.72 inches). Width and aspect describe the whole figure, including
+all panels. The sketches use a common scale; dashed boxes indicate plot areas.
+
 An explicit `figsize` takes precedence. `layout.size("single", aspect=0.75)`
 returns dimensions in inches for use with `plt.subplots()`.
+These are figure canvas dimensions; tight cropping during export can change
+the saved bounds. Use `bbox_inches=None` when the exported size must be exact.
 
 Option presets return keyword dictionaries for ordinary plotting calls:
 
@@ -151,17 +192,80 @@ as percentages.
 
 ## Error bars and limits
 
+### Shaded bands
+
+Plot a line, then pass its uncertainties to `shade()`. The band takes the most
+recent line's color unless you supply `color=`.
+
+```python
+with rpl.rc_context({"text.usetex": True}):
+    fig, axes = layout.subplots(1, 2, width="double", aspect=0.38,
+                               layout="constrained", sharey=True)
+    x = np.linspace(0, 6, 200)
+    y = np.exp(-x / 2)
+    std = 0.025 + 0.05 * y
+
+    axes[0].plot(x, y)
+    rpl.shade(axes[0], x, y, std)
+    axes[0].set_title(r"Symmetric: $y\pm\sigma$")
+
+    axes[1].plot(x, y)
+    rpl.shade(axes[1], x, y, (0.5 * std, 1.8 * std))
+    axes[1].set_title("Asymmetric")
+
+    for ax in axes:
+        ax.set(xlabel=r"Time, $t$", xlim=(0, 6))
+        rpl.clean_axes(ax, grid=False)
+    axes[0].set_ylabel("Response")
+    rpl.export.savefig(fig, "figures/shading")
+```
+
+![Symmetric and asymmetric shaded bands rendered with LaTeX](docs/images/shading.png)
+
+`yerr` accepts a scalar, an array of symmetric widths, or a `(2, N)` array of
+lower and upper widths. Widths are nonnegative distances from `y`, not absolute
+bounds; pass whichever standard deviations or interval widths you computed.
+`shade()` returns the filled artist and forwards options such as `alpha`,
+`where`, `step`, and `label` to Matplotlib's `fill_between()`.
+
+### Error bars
+
 Draw uncertainties with `rpl.errorbar()`:
 
 ```python
-rpl.errorbar(ax, x, y, yerr=se, **o.errorbar(p.grove[0]))
+with rpl.rc_context({"text.usetex": True}):
+    fig, axes = layout.subplots(1, 2, width="double", aspect=0.40,
+                               layout="constrained", sharex=True, sharey=True)
+    x = np.arange(1, 9)
+    y = 0.55 + 0.12 * np.sin(0.8 * x)
+    se = np.array([0.001, 0.003, 0.012, 0.045, 0.080, 0.006, 0.025, 0.002])
+
+    for ax, hide, title in zip(axes, (True, False),
+                               ("Adaptive hiding", "All error bars")):
+        rpl.errorbar(ax, x, y, yerr=se, hide_small_errors=hide,
+                     **o.errorbar(rpl.colors.blue, markersize=7,
+                                  markerfacecolor="none", markeredgewidth=1.2,
+                                  capsize=3, elinewidth=0.9))
+        ax.set(title=title, xlabel=r"Sample, $i$", xlim=(0.5, 8.5),
+               ylim=(0.30, 0.82), xticks=[2, 4, 6, 8])
+        rpl.clean_axes(ax, grid=False)
+    axes[0].set_ylabel(r"Estimate, $y_i$")
+    rpl.export.savefig(fig, "figures/errorbars")
 ```
+
+![Hollow markers with adaptive error hiding on the left and every error bar on the right](docs/images/errorbars.png)
+
+Both panels use the same estimates and uncertainties. Hollow markers make small
+bars visible in the right panel; adaptive hiding removes those shorter than the
+marker diameter on the left.
 
 Bars smaller than their markers are hidden individually and reappear when a zoom
 or resize makes them visible. Caps follow their bars; the uncertainty values and
 autoscaling bounds remain intact. Set `hide_small_errors=False` to show every
 bar. Polar axes and one-sided limit arrows require this opt-out. Inputs are fixed
 at creation; recreate the artist to change the data.
+
+### Visible limits
 
 To fit y limits to the visible x range:
 
@@ -187,20 +291,5 @@ rpl.export.saveclose(fig, "figures/response")               # Save and close
 Parent directories are created automatically. Save inside the style context so
 LaTeX and other temporary settings also apply during export. Standard Matplotlib
 save options, such as `transparent=True` or `bbox_inches=None`, pass through.
-
-## Development
-
-```bash
-pip install -e ".[dev]"
-pytest
-ruff check .
-```
-
-Rebuild the README figures with LaTeX enabled:
-
-```bash
-PYTHONPATH=src python scripts/render_palettes.py
-PYTHONPATH=src python scripts/render_example.py
-```
 
 [MIT license](LICENSE).

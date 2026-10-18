@@ -5,9 +5,9 @@ from __future__ import annotations
 from typing import Any
 
 from . import colors as c
-from .colors import Color
+from .colors import Color, NamedColor
 
-ColorLike = str | Color
+ColorLike = str | Color | NamedColor
 
 
 def _with_overrides(
