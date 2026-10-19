@@ -1,5 +1,7 @@
 # reiplotlib
 
+<img src="docs/images/cover.png" alt="Reiplotlib cover art: Reiko presenting a scientific plot" width="520">
+
 Reiplotlib is a collection of Matplotlib utilities, styles, and slightly
 opinionated presets for consistent, publication-ready figures.
 
