@@ -36,6 +36,7 @@ def main():
                 ("### Shaded bands", "shading"),
                 ("### Error bars", "errorbars"),
                 ("### Visible limits", "autoscale"),
+                ("### Shaded bands with a fixed baseline", "autoscale-band"),
             ):
                 section = readme.split(heading + "\n", 1)[1]
                 example = section.split("```python\n", 1)[1].split("```", 1)[0]

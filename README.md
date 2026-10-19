@@ -624,10 +624,47 @@ The large initial peak is outside both panels. Fitting the y limits to the
 visible data reveals the small oscillations without changing the curve.
 
 Shared-y panels combine their visible ranges, including error bars and crossing
-line segments. Manual y limits are preserved unless `override=True`. Lines,
-scatter, and line collections are supported; images and filled bands are not.
+line segments. Shaded bands from `shade()` or `fill_between()` contribute their
+visible edges too. Manual y limits are preserved unless `override=True`.
 Use `watch=True` to update on x-limit changes; the returned `(axes, callback_id)`
 pairs can be disconnected with `axes.callbacks.disconnect(callback_id)`.
+
+### Shaded bands with a fixed baseline
+
+For a positive quantity, we may want to keep zero in view while letting the
+upper limit follow the data. Pass `bottom=0`; the visible uncertainty band also
+counts toward the free upper limit:
+
+```python
+with rpl.rc_context({"text.usetex": True}):
+    fig, axes = layout.subplots(1, 2, width="double", aspect=0.38,
+                               layout="constrained", sharex=True)
+    x = np.linspace(0, 10, 400)
+    y = 6 * np.exp(-x) + 0.35 + 0.08 * np.sin(3 * x)
+    se = 0.08 + 0.04 * np.cos(x) ** 2
+    for ax in axes:
+        ax.plot(x, y)
+        rpl.shade(ax, x, y, se)
+        ax.set(xlim=(4, 10), xlabel=r"Time, $t$")
+        rpl.clean_axes(ax, grid=False)
+    axes[0].set(title="Full-data y limits", ylabel="Response")
+    axes[1].set_title("Fixed baseline")
+    rpl.autoscale_y(axes[1], bottom=0, margin=0.08)
+    rpl.export.savefig(fig, "figures/autoscale-band")
+```
+
+<img src="docs/images/autoscale-band.png" alt="A visible uncertainty band fitted above a fixed zero baseline, compared with full-data limits" width="720">
+
+`top=` works in the same way for a fixed upper limit. Margin is added only to
+the free side, so the requested bound remains exact. On logarithmic axes, fixed
+bounds must be positive; inverted axes keep their direction. If a view contains
+no data, its limits are left alone. A fixed bound beyond all visible data on the
+opposite side raises `ValueError` rather than reversing the axes.
+
+Bands are clipped at the visible x limits, including edges that cross the view
+without a sample inside it. Masked gaps remain gaps. Other data-coordinate
+polygon collections are also included; images, individual patches, and bars
+are not.
 
 ## Export
 
