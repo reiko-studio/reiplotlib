@@ -11,6 +11,7 @@ from .axes import (
     use_palette,
 )
 from .colors import Color, ColorFamily, NamedColor
+from .colorscale import ColorScale
 from .legends import axes_legend, collect_legend, figure_legend
 from .palettes import Palette, cycle
 from .palettes import get as palette
@@ -21,6 +22,7 @@ from .style import STYLE, apply_style, rc_context
 __all__ = [
     "Color",
     "ColorFamily",
+    "ColorScale",
     "NamedColor",
     "Palette",
     "STYLE",

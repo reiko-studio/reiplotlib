@@ -40,8 +40,12 @@ STYLE: dict[str, Any] = {
     "text.usetex": True,
     "xtick.color": c.neutral.ink,
     "xtick.labelsize": 10,
+    "xtick.minor.visible": True,
+    "xtick.minor.size": 2.0,
     "ytick.color": c.neutral.ink,
     "ytick.labelsize": 10,
+    "ytick.minor.visible": True,
+    "ytick.minor.size": 2.0,
     "pgf.texsystem": "pdflatex",
     "pgf.rcfonts": False,
 }

@@ -169,6 +169,10 @@ def test_rc_context_applies_and_restores_style():
         assert plt.rcParams["xtick.labelsize"] == 10
         assert plt.rcParams["ytick.color"] == "#22242A"
         assert plt.rcParams["ytick.labelsize"] == 10
+        assert plt.rcParams["xtick.minor.visible"] is True
+        assert plt.rcParams["ytick.minor.visible"] is True
+        assert plt.rcParams["xtick.minor.size"] == 2.0
+        assert plt.rcParams["ytick.minor.size"] == 2.0
     assert plt.rcParams["axes.facecolor"] == before
 
 

@@ -26,10 +26,12 @@ classifiers = [
 
 [project.optional-dependencies]
 dev = ["pytest>=8", "ruff>=0.8"]
+docs = ["mkdocs-material>=9.6,<10", "pdoc>=16,<17"]
 
 [project.urls]
-Homepage = "https://github.com/leogabac/fubumio"
-Issues = "https://github.com/leogabac/fubumio/issues"
+Homepage = "https://github.com/reiko-studio/reiplotlib"
+Issues = "https://github.com/reiko-studio/reiplotlib/issues"
+Documentation = "https://reiko-studio.github.io/reiplotlib/"
 
 [tool.hatch.build.targets.wheel]
 packages = ["src/reiplotlib"]

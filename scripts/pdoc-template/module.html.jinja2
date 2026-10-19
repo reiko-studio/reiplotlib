@@ -1,0 +1,5 @@
+{% extends "default/module.html.jinja2" %}
+{% block nav %}
+<a class="reiko-home" href="{{ '../' * (module.fullname.count('.') + 1) }}index.html">&larr; Guides and examples</a>
+{{ super() }}
+{% endblock %}

@@ -1,0 +1,45 @@
+/* Reiko reference: violet eyes, blue hair accent, pink hoodie, warm paper. */
+:root {
+  --reiko-ink: #39303f;
+  --reiko-violet: #6e3a96;
+  --reiko-blue: #405db0;
+  --reiko-pink: #fabdcc;
+  --reiko-paper: #f8f0ed;
+}
+
+[data-md-color-scheme="default"] {
+  --md-primary-fg-color: var(--reiko-violet);
+  --md-primary-fg-color--light: #8560a9;
+  --md-primary-fg-color--dark: #4e286c;
+  --md-primary-bg-color: #ffffff;
+  --md-accent-fg-color: var(--reiko-blue);
+  --md-accent-fg-color--transparent: #4c6bc61a;
+  --md-default-fg-color: var(--reiko-ink);
+  --md-default-fg-color--light: #695f70;
+  --md-default-bg-color: #fffcfa;
+  --md-code-bg-color: var(--reiko-paper);
+  --md-code-fg-color: var(--reiko-ink);
+  --md-typeset-a-color: var(--reiko-blue);
+  --md-text-font: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  --md-code-font: ui-monospace, "SFMono-Regular", Consolas, monospace;
+}
+
+.md-header {
+  box-shadow: 0 2px 0 var(--reiko-pink);
+}
+
+.md-typeset h1, .md-typeset h2, .md-typeset h3 {
+  color: var(--reiko-ink);
+  font-weight: 600;
+}
+
+.md-typeset img {
+  max-width: 100%;
+  height: auto;
+  background: #ffffff;
+}
+
+.md-typeset :focus-visible {
+  outline: 2px solid var(--reiko-violet);
+  outline-offset: 3px;
+}

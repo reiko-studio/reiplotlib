@@ -127,6 +127,18 @@ def hist(color: ColorLike | None = None, **overrides: Any) -> dict[str, Any]:
     )
 
 
+def colorbar(**overrides: Any) -> dict[str, Any]:
+    """Return slim colorbar geometry for either orientation.
+
+    Intended for automatically placed bars, not a caller-sized cax. Aspect is
+    length divided by thickness; fraction and pad are relative to the parent
+    axes. All geometry can be overridden in the call.
+    """
+    return _with_overrides(
+        {"aspect": 50, "fraction": 0.035, "pad": 0.035}, overrides
+    )
+
+
 def savefig(**overrides: Any) -> dict[str, Any]:
     """Return common keyword options for saving figures."""
 
@@ -141,6 +153,7 @@ def savefig(**overrides: Any) -> dict[str, Any]:
 
 __all__ = [
     "ColorLike",
+    "colorbar",
     "errorbar",
     "fill",
     "hist",

@@ -1,0 +1,49 @@
+site_name: reiplotlib
+site_description: Matplotlib utilities, styles, and slightly opinionated presets for publication-ready figures.
+site_url: https://reiko-studio.github.io/reiplotlib/
+repo_url: https://github.com/reiko-studio/reiplotlib
+repo_name: reiko-studio/reiplotlib
+edit_uri: ""
+
+theme:
+  name: material
+  font: false
+  palette:
+    scheme: default
+    primary: custom
+    accent: custom
+  features:
+    - navigation.sections
+    - navigation.footer
+    - content.code.copy
+
+nav:
+  - Home: index.md
+  - Examples:
+      - First figure: examples/first-figure.md
+      - Colors: examples/colors.md
+      - Numeric color scales: examples/color-scales.md
+      - Size and style: examples/sizing.md
+      - Panels: examples/panels.md
+      - Series styles: examples/series.md
+      - Shared legends: examples/legends.md
+      - Uncertainty and limits: examples/uncertainty.md
+      - Export: examples/export.md
+  - API reference: reference.md
+
+plugins:
+  - search
+
+markdown_extensions:
+  - admonition
+  - attr_list
+  - pymdownx.highlight:
+      anchor_linenums: true
+  - pymdownx.superfences
+  - toc:
+      permalink: true
+
+extra_css:
+  - stylesheets/reiko.css
+
+copyright: Part of Reiko Studio

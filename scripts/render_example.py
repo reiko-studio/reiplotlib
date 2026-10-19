@@ -25,6 +25,9 @@ def main():
             namespace = {}
             for heading, stem in (
                 ("## A first figure", "response"),
+                ("## Numeric color scales", "color-scale"),
+                ("### Discrete bins", "discrete-bins"),
+                ("### A colorbar in place of a legend", "decay-colorbar"),
                 ("### Your own color", "custom-color"),
                 ("## A figure with two panels", "panels"),
                 ("## Keeping series consistent", "series-styles"),

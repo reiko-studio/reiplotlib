@@ -1,0 +1,6 @@
+body { color: #39303f; background: #fffcfa; }
+a, .pdoc a { color: #405db0; }
+a:hover, .pdoc a:hover { color: #6e3a96; }
+nav.pdoc { background: #f8f0ed; border-right: 2px solid #fabdcc; }
+.pdoc pre { background: #f8f0ed; }
+.reiko-home { display: block; margin: 1rem 0; font-weight: 600; }
