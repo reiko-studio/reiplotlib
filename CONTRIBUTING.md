@@ -23,10 +23,11 @@ files and leaves the generated HTML in the ignored `site/` directory. Use
 
 Guide pages live in `docs/`; API text comes from source docstrings. Avoid adding
 manual signature lists to the guides. Keep the README focused on the short
-tutorial and figure highlights.
+tutorial and links to the documentation.
 
 The example images are committed, so building the website does not require TeX.
-To regenerate them, use the system's LaTeX installation:
+The plotting renderer reads the README quick start and the examples in
+`docs/examples/`. To regenerate the images, use the system's LaTeX installation:
 
 ```bash
 PYTHONPATH=src python scripts/render_example.py

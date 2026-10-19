@@ -1,4 +1,4 @@
-"""Render the README plotting examples with LaTeX enabled.
+"""Render the README quick start and documentation examples with LaTeX enabled.
 
 Run with PYTHONPATH=src python scripts/render_example.py.
 """
@@ -15,7 +15,6 @@ matplotlib.use("Agg")
 
 def main():
     root = Path(__file__).resolve().parents[1]
-    readme = (root / "README.md").read_text()
     destination = root / "docs/images"
     destination.mkdir(parents=True, exist_ok=True)
     previous = Path.cwd()
@@ -23,24 +22,50 @@ def main():
         try:
             os.chdir(temporary)
             namespace = {}
-            for heading, stem in (
-                ("## A first figure", "response"),
-                ("## Numeric color scales", "color-scale"),
-                ("### Discrete bins", "discrete-bins"),
-                ("### A colorbar in place of a legend", "decay-colorbar"),
-                ("### Your own color", "custom-color"),
-                ("## A figure with two panels", "panels"),
-                ("## Keeping series consistent", "series-styles"),
-                ("## Shared legends", "shared-legends"),
-                ("### A shared legend inside one panel", "panel-legend"),
-                ("### Shaded bands", "shading"),
-                ("### Error bars", "errorbars"),
-                ("### Visible limits", "autoscale"),
-                ("### Shaded bands with a fixed baseline", "autoscale-band"),
+            for source, heading, stem in (
+                ("README.md", "## A first figure", "response"),
+                (
+                    "docs/examples/color-scales.md",
+                    "# Numeric color scales",
+                    "color-scale",
+                ),
+                ("docs/examples/color-scales.md", "### Discrete bins", "discrete-bins"),
+                (
+                    "docs/examples/color-scales.md",
+                    "### A colorbar in place of a legend",
+                    "decay-colorbar",
+                ),
+                ("docs/examples/colors.md", "### Your own color", "custom-color"),
+                ("docs/examples/panels.md", "# A figure with two panels", "panels"),
+                (
+                    "docs/examples/series.md",
+                    "# Keeping series consistent",
+                    "series-styles",
+                ),
+                ("docs/examples/legends.md", "# Shared legends", "shared-legends"),
+                (
+                    "docs/examples/legends.md",
+                    "### A shared legend inside one panel",
+                    "panel-legend",
+                ),
+                (
+                    "docs/examples/secondary-axes.md",
+                    "# Secondary axes",
+                    "secondary-axes",
+                ),
+                ("docs/examples/uncertainty.md", "### Shaded bands", "shading"),
+                ("docs/examples/uncertainty.md", "### Error bars", "errorbars"),
+                ("docs/examples/uncertainty.md", "### Visible limits", "autoscale"),
+                (
+                    "docs/examples/uncertainty.md",
+                    "### Shaded bands with a fixed baseline",
+                    "autoscale-band",
+                ),
             ):
-                section = readme.split(heading + "\n", 1)[1]
+                text = (root / source).read_text()
+                section = text.split(heading + "\n", 1)[1]
                 example = section.split("```python\n", 1)[1].split("```", 1)[0]
-                exec(compile(example, f"README.md: {heading}", "exec"), namespace)
+                exec(compile(example, f"{source}: {heading}", "exec"), namespace)
                 shutil.copyfile(f"figures/{stem}.png", destination / f"{stem}.png")
         finally:
             os.chdir(previous)

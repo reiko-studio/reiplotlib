@@ -27,6 +27,7 @@ nav:
       - Panels: examples/panels.md
       - Series styles: examples/series.md
       - Shared legends: examples/legends.md
+      - Secondary axes: examples/secondary-axes.md
       - Uncertainty and limits: examples/uncertainty.md
       - Export: examples/export.md
   - API reference: reference.md

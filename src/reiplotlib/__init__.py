@@ -16,6 +16,7 @@ from .legends import axes_legend, collect_legend, figure_legend
 from .palettes import Palette, cycle
 from .palettes import get as palette
 from .plotting import errorbar, shade
+from .secondary import secondary_xaxis, secondary_yaxis
 from .series import SeriesStyle
 from .style import STYLE, apply_style, rc_context
 
@@ -47,5 +48,7 @@ __all__ = [
     "percent_axis",
     "rc_context",
     "shade",
+    "secondary_xaxis",
+    "secondary_yaxis",
     "use_palette",
 ]

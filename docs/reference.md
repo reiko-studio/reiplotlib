@@ -18,6 +18,7 @@ module directly:
 | [Series](api/reiplotlib/series.html) | Stable styles keyed by series identity |
 | [Legends](api/reiplotlib/legends.html) | Shared entries, grouped legends, and in-panel legends |
 | [Axes](api/reiplotlib/axes.html) | Panel labels, axes cleanup, and percentage formatting |
+| [Secondary axes](api/reiplotlib/secondary.html) | Converted x/y coordinates with visible ticks |
 | [Autoscaling](api/reiplotlib/autoscale.html) | Y limits fitted to the visible x range |
 | [Export](api/reiplotlib/export.html) | Save figures in one or several formats |
 
