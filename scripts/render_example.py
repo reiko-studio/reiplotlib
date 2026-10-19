@@ -12,6 +12,8 @@ import matplotlib
 
 matplotlib.use("Agg")
 
+from render_inset_comparison import main as render_inset_comparison
+
 
 def main():
     root = Path(__file__).resolve().parents[1]
@@ -53,6 +55,7 @@ def main():
                     "# Secondary axes",
                     "secondary-axes",
                 ),
+                ("docs/examples/insets.md", "# Insets", "insets"),
                 ("docs/examples/uncertainty.md", "### Shaded bands", "shading"),
                 ("docs/examples/uncertainty.md", "### Error bars", "errorbars"),
                 ("docs/examples/uncertainty.md", "### Visible limits", "autoscale"),
@@ -67,6 +70,7 @@ def main():
                 example = section.split("```python\n", 1)[1].split("```", 1)[0]
                 exec(compile(example, f"{source}: {heading}", "exec"), namespace)
                 shutil.copyfile(f"figures/{stem}.png", destination / f"{stem}.png")
+            render_inset_comparison()
         finally:
             os.chdir(previous)
 

@@ -1,15 +1,15 @@
 # reiplotlib
-
-<img src="docs/images/cover.png" alt="Reiplotlib cover art: Reiko presenting a scientific plot" width="520">
-
 Reiplotlib is a collection of Matplotlib utilities, styles, and slightly
 opinionated presets for consistent, publication-ready figures.
 
-It brings together column-sized layouts, sensible line and marker sizes,
-coordinated colors, and helpers for the repetitive parts of making a paper
-figure. Plot with ordinary Matplotlib and adjust anything you need.
+It brings together sensible layouts ready for journal articles
+and helpers for the repetitive parts of making a paper figure. 
+Plot with ordinary Matplotlib and adjust anything you need.
 
-Part of **Reiko Studio**.
+
+<img src="docs/images/cover.png" alt="Reiplotlib cover art: Reiko presenting a scientific plot" width="400">
+
+Part of **Reiko Studio**. Cover art by [Fenrir Amadeus](https://x.com/fenriramadeus) (a.k.a. [leogabac](https://github.com/leogabac))
 
 **[Documentation](https://reiko-studio.github.io/reiplotlib/)** ·
 [Examples](https://reiko-studio.github.io/reiplotlib/examples/first-figure/) ·

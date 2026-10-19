@@ -12,6 +12,7 @@ from .axes import (
 )
 from .colors import Color, ColorFamily, NamedColor
 from .colorscale import ColorScale
+from .insets import inset_backing, style_inset
 from .legends import axes_legend, collect_legend, figure_legend
 from .palettes import Palette, cycle
 from .palettes import get as palette
@@ -41,6 +42,8 @@ __all__ = [
     "figure_legend",
     "errorbar",
     "label_panel",
+    "inset_backing",
+    "style_inset",
     "layouts",
     "options",
     "palette",
